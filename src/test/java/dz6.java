@@ -17,11 +17,11 @@ public class dz6 {
     private final Logger logger = (Logger) LogManager.getLogger(dz6.class);
 
     @Before
-    public void StartUp() {
+    public void startUp() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
         driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         logger.info("Драйвер поднят");
     }
 
@@ -71,17 +71,16 @@ public class dz6 {
     }
 
     @After
-    public void quit(){
+    public void quit() {
         driver.quit();
     }
 
-    private void save() throws InterruptedException {
+    private void save() throws RuntimeException {
         driver.findElement(By.xpath("//*[contains(text(), 'Сохранить и продолжить')]")).click();
-        Thread.sleep(2000);
         logger.info("Сохранились");
     }
 
-    private void auth() throws RuntimeException  {
+    private void auth() throws InterruptedException {
         String login = "kukunina_ey@interrao.ru";
         String password = "Aa!23456789";
         String locator = "button.header2__auth.js-open-modal";
@@ -90,10 +89,10 @@ public class dz6 {
         driver.findElement(By.cssSelector(".js-psw-input")).sendKeys(password);
         driver.findElement(By.cssSelector("div.new-input-line.new-input-line_last.new-input-line_relative")).click();
         logger.info("Залогинились");
+        Thread.sleep(1000);
     }
 
-    private void enterLk() throws InterruptedException {
-        Thread.sleep(1000);
+    private void enterLk() throws RuntimeException {
         driver.get("https://otus.ru/lk/biography/personal/");
         logger.info("Переход в ЛК выполнен");
     }
@@ -113,22 +112,20 @@ public class dz6 {
         logger.info("Введены ФИО и дата рождения");
     }
 
-    private void inputCountry() throws InterruptedException {
+    private void inputCountry() throws RuntimeException {
         if (!driver.findElement(By.cssSelector(".js-lk-cv-dependent-master.js-lk-cv-custom-select")).getText().contains("Россия")) {
             driver.findElement(By.cssSelector(".js-lk-cv-dependent-master.js-lk-cv-custom-select")).click();
             driver.findElement(By.xpath("//*[contains(text(), 'Россия')]")).click();
         }
         logger.info("Страна выбрана");
-        Thread.sleep(1000);
     }
 
-    private void inputCity() throws InterruptedException {
+    private void inputCity() throws RuntimeException {
         if (!driver.findElement(By.cssSelector(".js-lk-cv-dependent-slave-city.js-lk-cv-custom-select")).getText().contains("Москва")) {
             driver.findElement(By.cssSelector(".js-lk-cv-dependent-slave-city.js-lk-cv-custom-select")).click();
             driver.findElement(By.xpath("//*[contains(text(), 'Москва')]")).click();
         }
         logger.info("Город выбран");
-        Thread.sleep(1000);
     }
 
     private void inputLanguage() throws InterruptedException {
@@ -142,9 +139,9 @@ public class dz6 {
                     "    ')]")).click();
         }
         logger.info("Выбран уровень английского");
-        Thread.sleep(1000);
     }
-    private void chooseWorkingFormat() throws InterruptedException {
+
+    private void chooseWorkingFormat() throws RuntimeException {
         if (!driver.findElement(By.cssSelector("input[title='Удаленно']")).isSelected()) {
             driver.findElement(By.cssSelector("input[title='Удаленно']")).click();
         }
@@ -155,32 +152,36 @@ public class dz6 {
             driver.findElement(By.cssSelector("input[title='Гибкий график']")).click();
         }
         logger.info("Выбрана удаленка");
-        Thread.sleep(1000);
+
     }
 
-    private void chooseGender() throws InterruptedException {
+    private void chooseGender() throws RuntimeException {
         driver.findElement(By.id("id_gender")).click();
         driver.findElement(By.cssSelector("option[value='f']")).click();
         logger.info("Добавлен пол");
-        Thread.sleep(1000);
+
     }
 
-    private void chooseContacts() throws InterruptedException {
+    private void chooseContacts() throws RuntimeException {
+        if (driver.findElement(By.id("id_contact-0-value")).getAttribute("value").equals("Elena Kukunina") & driver.findElement(By.id("id_contact-1-value")).getAttribute("value").equals("Elena Kukunina")) {
+            driver.findElement(By.xpath("//div[@class='container__col container__col_12 container__col_md-0']//button")).click();
+            driver.findElement(By.xpath("//div[@data-num='1']//div[@class='container__col container__col_12 container__col_md-0']//button[last()]")).click();
+            save();
+            enterLk();
+        }
         driver.findElement(By.xpath("//span[@class='placeholder']")).click();
-        Thread.sleep(1000);
         driver.findElement(By.cssSelector("button[title='Тelegram']")).click();
         driver.findElement(By.id("id_contact-0-value")).sendKeys("Elena Kukunina");
         logger.info("Добавлен 1 контакт");
-        Thread.sleep(1000);
+
         driver.findElement(By.cssSelector("button[class='lk-cv-block__action lk-cv-block__action_md-no-spacing js-formset-add js-lk-cv-custom-select-add']")).click();
         driver.findElement(By.xpath("//span[@class='placeholder']")).click();
-        Thread.sleep(1000);
         driver.findElement(By.xpath("//div[@class='lk-cv-block__select-options lk-cv-block__select-options_left js-custom-select-options-container']//button[last()]")).click();
         driver.findElement(By.id("id_contact-1-value")).sendKeys("Elena Kukunina");
         logger.info("Добавлено 2 контакта");
     }
 
-    private void chooseMoveOptions() throws InterruptedException {
+    private void chooseMoveOptions() throws RuntimeException {
         driver.findElement(By.xpath("//input[@id='id_ready_to_relocate_0']"));
         //driver.findElement(By.cssSelector("label[class='radio radio_light4 radio_size-sm radio_vertical-center lk-cv-block__radio']")).click();
         logger.info("Нет готовности к переезду");
